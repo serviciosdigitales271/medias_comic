@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tienda de Medias - Catálogo Vivo</title>
+  <style>
+    /* Estilos rápidos para las tarjetas de productos */
+    body { font-family: sans-serif; background: #fafafa; margin: 0; padding: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+    .card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
+    .card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; }
+    .price { font-weight: bold; color: #e91e63; font-size: 1.2rem; }
+    .btn-ws { display: inline-block; background: #25d366; color: white; padding: 10px 15px; border-radius: 20px; text-decoration: none; font-weight: bold; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <h1>🧦 Catálogo de Medias</h1>
+  <div id="loading">Cargando modelos nuevos...</div>
+  <div id="catalog" class="grid"></div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbwAEySXazb5Od4_IxUCxIVhgP01Zo9ek0_0kPl6CAzezShQORsBC-eeJ39WLlTiYKvX3w/exec";
+    const TELEFONO_WHATSAPP = "593900000000"; // Reemplaza con tu número de WhatsApp
+
+    function cargarCatalogo() {
+      fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('loading').style.display = 'none';
+          const container = document.getElementById('catalog');
+          container.innerHTML = '';
+
+          if (data.length === 0) {
+            container.innerHTML = '<p>No hay modelos disponibles por el momento.</p>';
+            return;
+          }
+
+          data.forEach(item => {
+            // Adaptar las URLs de Google Drive para visualización directa
+            let fotoUrl = item.foto || '';
+            if (fotoUrl.includes('drive.google.com') && fotoUrl.includes('id=')) {
+              const fileId = fotoUrl.split('id=')[1].split('&')[0];
+              fotoUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+            }
+
+            const mensajeWS = encodeURIComponent(`¡Hola! Quisiera pedir el modelo: ${item.nombre} ($${item.precio})`);
+            const linkWS = `https://wa.me/${TELEFONO_WHATSAPP}?text=${mensajeWS}`;
+
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+              <img src="${fotoUrl}" alt="${item.nombre}" onerror="this.src='https://via.placeholder.com/200?text=Sin+Foto'">
+              <h3>${item.nombre}</h3>
+              <p class="price">$${parseFloat(item.precio).toFixed(2)}</p>
+              <a href="${linkWS}" target="_blank" class="btn-ws">Pedir por WhatsApp</a>
+            `;
+            container.appendChild(card);
+          });
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById('loading').innerText = 'Error al cargar los productos.';
+        });
+    }
+
+    // Cargar productos al iniciar la página
+    cargarCatalogo();
+  </script>
+</body>
+</html>
