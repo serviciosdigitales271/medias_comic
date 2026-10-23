@@ -3,70 +3,349 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tienda de Medias - Catálogo Vivo</title>
+  <title>SockLand 🧦 | Diseños Únicos y Divertidos</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome para iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
-    /* Estilos rápidos para las tarjetas de productos */
-    body { font-family: sans-serif; background: #fafafa; margin: 0; padding: 20px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
-    .card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
-    .card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; }
-    .price { font-weight: bold; color: #e91e63; font-size: 1.2rem; }
-    .btn-ws { display: inline-block; background: #25d366; color: white; padding: 10px 15px; border-radius: 20px; text-decoration: none; font-weight: bold; margin-top: 10px; }
+    :root {
+      --primary: #ff477e;
+      --secondary: #7209b7;
+      --accent: #4cc9f0;
+      --bg: #fff5f8;
+      --text: #2b2d42;
+      --card-bg: #ffffff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
+
+    /* Header & Hero */
+    header {
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+      box-shadow: 0 10px 25px rgba(255, 71, 126, 0.2);
+    }
+    header h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 10px; }
+    header p { font-size: 1.1rem; opacity: 0.9; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+
+    /* Barra de búsqueda y filtros */
+    .filters-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: space-between;
+      align-items: center;
+      margin: 30px 0 20px 0;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 20px 12px 45px;
+      border: 2px solid #ffd1dc;
+      border-radius: 30px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+      background: white;
+    }
+    .search-box input:focus { border-color: var(--primary); }
+    .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #aaa; }
+
+    .category-chips {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+    }
+
+    .chip {
+      background: white;
+      border: 2px solid #ffd1dc;
+      padding: 8px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+      white-space: nowrap;
+      color: var(--text);
+    }
+    .chip.active, .chip:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Grid de Productos */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 25px;
+      margin-bottom: 50px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    }
+
+    .card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      background: #eee;
+    }
+
+    .card-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .badge {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: var(--primary);
+      color: white;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 10px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .card title, .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+
+    .price { font-size: 1.25rem; font-weight: 800; color: var(--primary); }
+
+    .btn-ws {
+      background: #25d366;
+      color: white;
+      border: none;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, background 0.2s;
+      box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+    }
+    .btn-ws:hover { transform: scale(1.1); background: #20ba5a; }
+
+    /* Estado de carga y alertas */
+    .message-state {
+      text-align: center;
+      padding: 50px;
+      font-size: 1.2rem;
+      color: #666;
+      grid-column: 1 / -1;
+    }
+
+    /* Footer flotante / Beneficios */
+    .benefits {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      margin-bottom: 40px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    }
+
+    .benefit-item {
+      text-align: center;
+    }
+    .benefit-item i { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
+    .benefit-item h4 { font-size: 1rem; margin-bottom: 5px; }
+    .benefit-item p { font-size: 0.85rem; color: #666; }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #2b2d42;
+      color: white;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
 
-  <h1>🧦 Catálogo de Medias</h1>
-  <div id="loading">Cargando modelos nuevos...</div>
-  <div id="catalog" class="grid"></div>
+  <header>
+    <h1>🧦 SockLand Store</h1>
+    <p>¡Dale estilo, color y diversión a cada paso que das!</p>
+  </header>
+
+  <div class="container">
+
+    <!-- Beneficios -->
+    <div class="benefits">
+      <div class="benefit-item">
+        <i class="fa-solid fa-truck-fast"></i>
+        <h4>Envíos Seguros</h4>
+        <p>A todo el país y Quito</p>
+      </div>
+      <div class="benefit-item">
+        <i class="fa-solid fa-hand-holding-dollar"></i>
+        <h4>Pago Contra Entrega</h4>
+        <p>Pagas al recibir tu pedido</p>
+      </div>
+      <div class="benefit-item">
+        <i class="fa-solid fa-face-smile"></i>
+        <h4>Algodón Premium</h4>
+        <p>Máxima suavidad y confort</p>
+      </div>
+    </div>
+
+    <!-- Barra de Búsqueda y Filtros -->
+    <div class="filters-bar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Busca tu modelo favorito (ej: Spiderman)..." onkeyup="filtrarProductos()">
+      </div>
+      <div class="category-chips">
+        <div class="chip active" onclick="filtrarCategoria('Todas', this)">Todas</div>
+        <div class="chip" onclick="filtrarCategoria('Animadas', this)">Animadas / Kawaii</div>
+        <div class="chip" onclick="filtrarCategoria('Deportivas', this)">Deportivas</div>
+        <div class="chip" onclick="filtrarCategoria('Formales', this)">Formales</div>
+      </div>
+    </div>
+
+    <!-- Catálogo de Medias -->
+    <div id="catalog" class="grid">
+      <div class="message-state">Cargando modelos más nuevos... 🧦✨</div>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>© 2026 SockLand. Todos los derechos reservados. | Diseñado para ventas rápidas por WhatsApp</p>
+  </footer>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwAEySXazb5Od4_IxUCxIVhgP01Zo9ek0_0kPl6CAzezShQORsBC-eeJ39WLlTiYKvX3w/exec";
-    const TELEFONO_WHATSAPP = "593900000000"; // Reemplaza con tu número de WhatsApp
+    const TELEFONO_WHATSAPP = "593900000000"; // ⚠️ REEMPLAZA CON TU NÚMERO DE WHATSAPP REAL (ej: 593991234567)
 
-    function cargarCatalogo() {
+    let todosLosProductos = [];
+    let categoriaActual = 'Todas';
+
+    function obtenerProductos() {
       fetch(API_URL)
         .then(res => res.json())
         .then(data => {
-          document.getElementById('loading').style.display = 'none';
-          const container = document.getElementById('catalog');
-          container.innerHTML = '';
-
-          if (data.length === 0) {
-            container.innerHTML = '<p>No hay modelos disponibles por el momento.</p>';
-            return;
-          }
-
-          data.forEach(item => {
-            // Adaptar las URLs de Google Drive para visualización directa
-            let fotoUrl = item.foto || '';
-            if (fotoUrl.includes('drive.google.com') && fotoUrl.includes('id=')) {
-              const fileId = fotoUrl.split('id=')[1].split('&')[0];
-              fotoUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
-            }
-
-            const mensajeWS = encodeURIComponent(`¡Hola! Quisiera pedir el modelo: ${item.nombre} ($${item.precio})`);
-            const linkWS = `https://wa.me/${TELEFONO_WHATSAPP}?text=${mensajeWS}`;
-
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-              <img src="${fotoUrl}" alt="${item.nombre}" onerror="this.src='https://via.placeholder.com/200?text=Sin+Foto'">
-              <h3>${item.nombre}</h3>
-              <p class="price">$${parseFloat(item.precio).toFixed(2)}</p>
-              <a href="${linkWS}" target="_blank" class="btn-ws">Pedir por WhatsApp</a>
-            `;
-            container.appendChild(card);
-          });
+          todosLosProductos = data;
+          mostrarProductos(todosLosProductos);
         })
         .catch(err => {
           console.error(err);
-          document.getElementById('loading').innerText = 'Error al cargar los productos.';
+          document.getElementById('catalog').innerHTML = `
+            <div class="message-state" style="color: #e63946;">
+              <i class="fa-solid fa-triangle-exclamation" style="font-size: 2rem; margin-bottom: 10px;"></i><br>
+              No se pudieron cargar los productos en este momento. Intenta recargar la página.
+            </div>`;
         });
     }
 
-    // Cargar productos al iniciar la página
-    cargarCatalogo();
+    function mostrarProductos(productos) {
+      const container = document.getElementById('catalog');
+      container.innerHTML = '';
+
+      if (productos.length === 0) {
+        container.innerHTML = `<div class="message-state">No se encontraron modelos disponibles. 🧦</div>`;
+        return;
+      }
+
+      productos.forEach(item => {
+        let fotoUrl = item.foto || '';
+        if (fotoUrl.includes('drive.google.com') && fotoUrl.includes('id=')) {
+          const fileId = fotoUrl.split('id=')[1].split('&')[0];
+          fotoUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+        }
+
+        const mensajeWS = encodeURIComponent(`¡Hola! 👋 Me interesa comprar el modelo de medias *${item.nombre}* (${item.categoria}) por un valor de $${parseFloat(item.precio).toFixed(2)}. ¿Cómo hacemos con el envío?`);
+        const linkWS = `https://wa.me/${TELEFONO_WHATSAPP}?text=${mensajeWS}`;
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <span class="badge">${item.categoria || 'Nuevo'}</span>
+          <img src="${fotoUrl}" alt="${item.nombre}" onerror="this.src='https://images.unsplash.com/photo-1582965772847-1950cc283fa8?auto=format&fit=crop&w=500&q=80'">
+          <div class="card-body">
+            <div>
+              <h3>${item.nombre}</h3>
+            </div>
+            <div class="card-footer">
+              <span class="price">$${parseFloat(item.precio).toFixed(2)}</span>
+              <a href="${linkWS}" target="_blank" class="btn-ws" title="Pedir por WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function filtrarProductos() {
+      const texto = document.getElementById('searchInput').value.toLowerCase();
+      
+      const filtrados = todosLosProductos.filter(item => {
+        const coincideTexto = item.nombre.toLowerCase().includes(texto);
+        const coincideCat = (categoriaActual === 'Todas' || item.categoria === categoriaActual);
+        return coincideTexto && coincideCat;
+      });
+
+      mostrarProductos(filtrados);
+    }
+
+    function filtrarCategoria(cat, elemento) {
+      categoriaActual = cat;
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      elemento.classList.add('active');
+      filtrarProductos();
+    }
+
+    // Inicializar carga al abrir la página
+    obtenerProductos();
   </script>
 </body>
 </html>
