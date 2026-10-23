@@ -144,7 +144,7 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
-    .card title, .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
     
     .card-footer {
       display: flex;
@@ -173,7 +173,6 @@
     }
     .btn-ws:hover { transform: scale(1.1); background: #20ba5a; }
 
-    /* Estado de carga y alertas */
     .message-state {
       text-align: center;
       padding: 50px;
@@ -182,7 +181,7 @@
       grid-column: 1 / -1;
     }
 
-    /* Footer flotante / Beneficios */
+    /* Beneficios */
     .benefits {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -194,9 +193,7 @@
       box-shadow: 0 5px 15px rgba(0,0,0,0.03);
     }
 
-    .benefit-item {
-      text-align: center;
-    }
+    .benefit-item { text-align: center; }
     .benefit-item i { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
     .benefit-item h4 { font-size: 1rem; margin-bottom: 5px; }
     .benefit-item p { font-size: 0.85rem; color: #666; }
@@ -298,9 +295,18 @@
 
       productos.forEach(item => {
         let fotoUrl = item.foto || '';
-        if (fotoUrl.includes('drive.google.com') && fotoUrl.includes('id=')) {
-          const fileId = fotoUrl.split('id=')[1].split('&')[0];
-          fotoUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+        
+        // Conversión inteligente de enlaces de Google Drive para visualización web
+        if (fotoUrl.includes('drive.google.com')) {
+          let fileId = '';
+          if (fotoUrl.includes('id=')) {
+            fileId = fotoUrl.split('id=')[1].split('&')[0];
+          } else if (fotoUrl.includes('/d/')) {
+            fileId = fotoUrl.split('/d/')[1].split('/')[0];
+          }
+          if (fileId) {
+            fotoUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
+          }
         }
 
         const mensajeWS = encodeURIComponent(`¡Hola! 👋 Me interesa comprar el modelo de medias *${item.nombre}* (${item.categoria}) por un valor de $${parseFloat(item.precio).toFixed(2)}. ¿Cómo hacemos con el envío?`);
@@ -344,7 +350,7 @@
       filtrarProductos();
     }
 
-    // Inicializar carga al abrir la página
+    // Cargar productos al abrir la página
     obtenerProductos();
   </script>
 </body>
